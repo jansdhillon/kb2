@@ -2,18 +2,13 @@ openapi: 3.1.0
 info:
   title: Kathrin's Books API
   version: 1.0.0
-  description: >
-    REST API for Kathrin's Books — a Next.js bookstore application.
-    Authentication is handled via Supabase session cookies. Admin-only endpoints
-    require the authenticated user to have `is_admin: true` in their user
-    metadata.
+  description: |
+    REST API for Kathrin's Books — a Next.js bookstore application. Authentication is handled via Supabase session cookies. Admin-only endpoints require the authenticated user to have `is_admin: true` in their user metadata.
 servers:
   - url: /api
     description: Same-origin API (relative to the Next.js app)
-
 security:
   - cookieAuth: []
-
 paths:
   /health:
     get:
@@ -21,9 +16,10 @@ paths:
       summary: Health check
       description: Health check endpoint for Cloud Run and other services.
       security: []
-      tags: [Health]
+      tags:
+        - Health
       responses:
-        "200":
+        '200':
           description: Service is healthy
           content:
             application/json:
@@ -38,27 +34,26 @@ paths:
                     format: date-time
                   version:
                     type: string
-                    example: "1.0.0"
+                    example: 1.0.0
                   service:
                     type: string
                     example: kathrins-books
-        "500":
-          $ref: "#/components/responses/InternalError"
-
+        '500':
+          $ref: '#/components/responses/InternalError'
   /books:
     get:
       operationId: listBooks
       summary: List all books
-      description: >
-        Returns a paginated list of books. Pagination is controlled with the
-        `from` and `to` query parameters (inclusive range indices).
+      description: |
+        Returns a paginated list of books. Pagination is controlled with the `from` and `to` query parameters (inclusive range indices).
       security: []
-      tags: [Books]
+      tags:
+        - Books
       parameters:
-        - $ref: "#/components/parameters/from"
-        - $ref: "#/components/parameters/to"
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/to'
       responses:
-        "200":
+        '200':
           description: A list of books
           content:
             application/json:
@@ -68,20 +63,20 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Book"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /books/{bookId}:
+                      $ref: '#/components/schemas/Book'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  '/books/{bookId}':
     get:
       operationId: getBook
       summary: Get a book by ID
       security: []
-      tags: [Books]
+      tags:
+        - Books
       parameters:
-        - $ref: "#/components/parameters/bookId"
+        - $ref: '#/components/parameters/bookId'
       responses:
-        "200":
+        '200':
           description: The requested book
           content:
             application/json:
@@ -89,24 +84,23 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: "#/components/schemas/Book"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /books/{bookId}/images:
+                    $ref: '#/components/schemas/Book'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  '/books/{bookId}/images':
     get:
       operationId: getBookImages
       summary: Get images for a book
-      description: >
-        Returns the list of image URLs/names stored for a book in GCP Cloud
-        Storage. **Requires admin authentication.**
-      tags: [Books]
+      description: |
+        Returns the list of image URLs/names stored for a book in GCP Cloud Storage. **Requires admin authentication.**
+      tags:
+        - Books
       parameters:
-        - $ref: "#/components/parameters/bookId"
+        - $ref: '#/components/parameters/bookId'
       responses:
-        "200":
+        '200':
           description: Image list for the book
           content:
             application/json:
@@ -121,29 +115,28 @@ paths:
                     items:
                       type: string
                       description: Image file name or URL
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /books/{bookId}/product:
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  '/books/{bookId}/product':
     get:
       operationId: getBookProduct
       summary: Get the Stripe product & price for a book
-      description: >
-        Returns the Stripe product and price records associated with a book.
-        **Requires admin authentication.**
-      tags: [Books]
+      description: |
+        Returns the Stripe product and price records associated with a book. **Requires admin authentication.**
+      tags:
+        - Books
       parameters:
-        - $ref: "#/components/parameters/bookId"
+        - $ref: '#/components/parameters/bookId'
       responses:
-        "200":
+        '200':
           description: Product and price data for the book
           content:
             application/json:
@@ -153,25 +146,23 @@ paths:
                   data:
                     type: object
                     description: Product and price records from Stripe/Supabase
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /books/{bookId}/similar:
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  '/books/{bookId}/similar':
     post:
       operationId: getSimilarBooks
       summary: Get books similar to a given book
-      description: >
-        Returns books with similar title, author, or tags to the provided
-        input. The `bookId` path parameter is used to exclude the source book
-        from results.
+      description: |
+        Returns books with similar title, author, or tags to the provided input. The `bookId` path parameter is used to exclude the source book from results.
       security: []
-      tags: [Books]
+      tags:
+        - Books
       parameters:
-        - $ref: "#/components/parameters/bookId"
+        - $ref: '#/components/parameters/bookId'
       requestBody:
         required: false
         content:
@@ -181,17 +172,17 @@ paths:
               properties:
                 title:
                   type: string
-                  default: ""
+                  default: ''
                 author:
                   type: string
-                  default: ""
+                  default: ''
                 tags:
                   type: array
                   items:
                     type: string
                   default: []
       responses:
-        "200":
+        '200':
           description: A list of similar books
           content:
             application/json:
@@ -201,24 +192,22 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/Book"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  # ───────────────────────── Orders ─────────────────────────
+                      $ref: '#/components/schemas/Book'
+        '500':
+          $ref: '#/components/responses/InternalError'
   /orders:
     get:
       operationId: listOrders
       summary: List all orders
-      description: >
-        Returns a paginated list of all orders with their line items.
-        **Requires admin authentication.**
-      tags: [Orders]
+      description: |
+        Returns a paginated list of all orders with their line items. **Requires admin authentication.**
+      tags:
+        - Orders
       parameters:
-        - $ref: "#/components/parameters/from"
-        - $ref: "#/components/parameters/to"
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/to'
       responses:
-        "200":
+        '200':
           description: A list of orders
           content:
             application/json:
@@ -228,24 +217,23 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/OrderWithItems"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /orders/{orderId}:
+                      $ref: '#/components/schemas/OrderWithItems'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  '/orders/{orderId}':
     get:
       operationId: getOrder
       summary: Get an order by ID (admin)
-      description: >
-        Returns a single order with its line items. **Requires admin
-        authentication.**
-      tags: [Orders]
+      description: |
+        Returns a single order with its line items. **Requires admin authentication.**
+      tags:
+        - Orders
       parameters:
-        - $ref: "#/components/parameters/orderId"
+        - $ref: '#/components/parameters/orderId'
       responses:
-        "200":
+        '200':
           description: The requested order with its items
           content:
             application/json:
@@ -256,31 +244,29 @@ paths:
                     type: object
                     properties:
                       order:
-                        $ref: "#/components/schemas/Order"
+                        $ref: '#/components/schemas/Order'
                       orderItems:
                         type: array
                         items:
-                          $ref: "#/components/schemas/OrderItem"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /orders/user/{orderId}:
+                          $ref: '#/components/schemas/OrderItem'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  '/orders/user/{orderId}':
     get:
       operationId: getUserOrder
       summary: Get an order belonging to the current user
-      description: >
-        Returns a single order and its line items, scoped to the currently
-        authenticated user. Returns 404 if the order does not belong to the
-        user.
-      tags: [Orders]
+      description: |
+        Returns a single order and its line items, scoped to the currently authenticated user. Returns 404 if the order does not belong to the user.
+      tags:
+        - Orders
       parameters:
-        - $ref: "#/components/parameters/orderId"
+        - $ref: '#/components/parameters/orderId'
       responses:
-        "200":
+        '200':
           description: The requested order with its items
           content:
             application/json:
@@ -291,28 +277,27 @@ paths:
                     type: object
                     properties:
                       order:
-                        $ref: "#/components/schemas/Order"
+                        $ref: '#/components/schemas/Order'
                       orderItems:
                         type: array
                         items:
-                          $ref: "#/components/schemas/OrderItem"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  # ───────────────────────── Users ──────────────────────────
+                          $ref: '#/components/schemas/OrderItem'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
   /users:
     get:
       operationId: listUsers
       summary: List all users
-      description: >
+      description: |
         Returns all registered users. **Requires admin authentication.**
-      tags: [Users]
+      tags:
+        - Users
       responses:
-        "200":
+        '200':
           description: A list of users
           content:
             application/json:
@@ -322,25 +307,23 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/User"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /users/{userId}/orders:
+                      $ref: '#/components/schemas/User'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  '/users/{userId}/orders':
     get:
       operationId: listUserOrders
       summary: List orders for a specific user
-      description: >
-        Returns all orders with their line items for the given user. The
-        authenticated user may only fetch their own orders (userId must match
-        the session).
-      tags: [Users]
+      description: |
+        Returns all orders with their line items for the given user. The authenticated user may only fetch their own orders (userId must match the session).
+      tags:
+        - Users
       parameters:
-        - $ref: "#/components/parameters/userId"
+        - $ref: '#/components/parameters/userId'
       responses:
-        "200":
+        '200':
           description: A list of orders for the user
           content:
             application/json:
@@ -350,36 +333,38 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/OrderWithItems"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  # ─────────────────────── Collections ──────────────────────
+                      $ref: '#/components/schemas/OrderWithItems'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
   /collections:
     get:
       operationId: listCollections
       summary: List all collections
-      description: >
-        Returns a paginated list of collections. Pass `includeBooks=true` to
-        embed the associated books in each collection.
+      description: |
+        Returns a paginated list of collections. Pass `includeBooks=true` to embed the associated books in each collection.
       security: []
-      tags: [Collections]
+      tags:
+        - Collections
       parameters:
-        - $ref: "#/components/parameters/from"
-        - $ref: "#/components/parameters/to"
+        - $ref: '#/components/parameters/from'
+        - $ref: '#/components/parameters/to'
         - name: includeBooks
           in: query
-          description: When `true` or `1`, each collection includes its books array.
+          description: 'When `true` or `1`, each collection includes its books array.'
           schema:
             type: string
-            enum: ["true", "false", "1", "0"]
-            default: "false"
+            enum:
+              - 'true'
+              - 'false'
+              - '1'
+              - '0'
+            default: 'false'
       responses:
-        "200":
+        '200':
           description: A list of collections
           content:
             application/json:
@@ -390,21 +375,21 @@ paths:
                     type: array
                     items:
                       oneOf:
-                        - $ref: "#/components/schemas/Collection"
-                        - $ref: "#/components/schemas/CollectionWithBooks"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /collections/{collectionId}:
+                        - $ref: '#/components/schemas/Collection'
+                        - $ref: '#/components/schemas/CollectionWithBooks'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  '/collections/{collectionId}':
     get:
       operationId: getCollection
       summary: Get a collection by ID (includes books)
       security: []
-      tags: [Collections]
+      tags:
+        - Collections
       parameters:
-        - $ref: "#/components/parameters/collectionId"
+        - $ref: '#/components/parameters/collectionId'
       responses:
-        "200":
+        '200':
           description: The requested collection with its books
           content:
             application/json:
@@ -412,23 +397,21 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: "#/components/schemas/CollectionWithBooks"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  # ───────────────────────── Cart ───────────────────────────
+                    $ref: '#/components/schemas/CollectionWithBooks'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
   /cart:
     get:
       operationId: getCart
       summary: Get the current user's cart
-      description: >
-        Returns the cart total and line items for the authenticated user.
-        Creates a cart if one does not already exist.
-      tags: [Cart]
+      description: |
+        Returns the cart total and line items for the authenticated user. Creates a cart if one does not already exist.
+      tags:
+        - Cart
       responses:
-        "200":
+        '200':
           description: Cart details
           content:
             application/json:
@@ -441,27 +424,26 @@ paths:
                   cartItems:
                     type: array
                     items:
-                      $ref: "#/components/schemas/CartItem"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "409":
+                      $ref: '#/components/schemas/CartItem'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
           description: A book in the cart is out of stock
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  # ───────────────────────── Stats ──────────────────────────
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
   /stats/books:
     get:
       operationId: getBookStats
       summary: Get total book count
       description: Returns the total number of books in the catalogue. **Requires admin authentication.**
-      tags: [Stats]
+      tags:
+        - Stats
       responses:
-        "200":
+        '200':
           description: Book count
           content:
             application/json:
@@ -470,19 +452,19 @@ paths:
                 properties:
                   data:
                     type: integer
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
   /stats/orders:
     get:
       operationId: getOrderStats
       summary: Get total order count
       description: Returns the total number of orders. **Requires admin authentication.**
-      tags: [Stats]
+      tags:
+        - Stats
       responses:
-        "200":
+        '200':
           description: Order count
           content:
             application/json:
@@ -491,19 +473,19 @@ paths:
                 properties:
                   data:
                     type: integer
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
   /stats/users:
     get:
       operationId: getUserStats
       summary: Get total user count
       description: Returns the total number of registered users. **Requires admin authentication.**
-      tags: [Stats]
+      tags:
+        - Stats
       responses:
-        "200":
+        '200':
           description: User count
           content:
             application/json:
@@ -512,22 +494,19 @@ paths:
                 properties:
                   data:
                     type: integer
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  # ─────────────────────── Webhooks ─────────────────────────
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
   /webhooks:
     post:
       operationId: stripeWebhook
       summary: Stripe webhook receiver
-      description: >
-        Receives and processes Stripe webhook events. The request body must be
-        the raw Stripe event payload. The `Stripe-Signature` header is required
-        for signature verification.
+      description: |
+        Receives and processes Stripe webhook events. The request body must be the raw Stripe event payload. The `Stripe-Signature` header is required for signature verification.
       security: []
-      tags: [Webhooks]
+      tags:
+        - Webhooks
       parameters:
         - name: Stripe-Signature
           in: header
@@ -543,7 +522,7 @@ paths:
               type: object
               description: Raw Stripe event object
       responses:
-        "200":
+        '200':
           description: Event received and processed
           content:
             application/json:
@@ -553,22 +532,18 @@ paths:
                   received:
                     type: boolean
                     example: true
-        "400":
+        '400':
           description: Invalid signature or unsupported event type
-        "500":
+        '500':
           description: Failed to retrieve webhook secret
-
-# ─────────────────────── Components ───────────────────────
 components:
   securitySchemes:
     cookieAuth:
       type: apiKey
       in: cookie
       name: sb-access-token
-      description: >
-        Supabase session cookie set automatically after sign-in. The actual
-        cookie name may vary by Supabase project configuration.
-
+      description: |
+        Supabase session cookie set automatically after sign-in. The actual cookie name may vary by Supabase project configuration.
   parameters:
     bookId:
       name: bookId
@@ -601,22 +576,27 @@ components:
     from:
       name: from
       in: query
-      description: Start index for pagination (0-based, inclusive).
+      description: 'Start index for pagination (0-based, inclusive).'
       schema:
         type: integer
         minimum: 0
     to:
       name: to
       in: query
-      description: End index for pagination (0-based, inclusive).
+      description: 'End index for pagination (0-based, inclusive).'
       schema:
         type: integer
         minimum: 0
-
   schemas:
     Book:
       type: object
-      required: [id, title, author, price, stock, omit_by]
+      required:
+        - id
+        - title
+        - author
+        - price
+        - stock
+        - omit_by
       properties:
         id:
           type: string
@@ -676,10 +656,16 @@ components:
           type: integer
         omit_by:
           type: boolean
-
     Address:
       type: object
-      required: [name, email, line1, city, state, country, postal_code]
+      required:
+        - name
+        - email
+        - line1
+        - city
+        - state
+        - country
+        - postal_code
       properties:
         name:
           type: string
@@ -699,10 +685,13 @@ components:
           type: string
         postal_code:
           type: string
-
     Order:
       type: object
-      required: [id, ordered_at, user_id, address]
+      required:
+        - id
+        - ordered_at
+        - user_id
+        - address
       properties:
         id:
           type: string
@@ -722,22 +711,31 @@ components:
         status:
           type: string
           nullable: true
-          enum: [Delivered, Shipped, Ordered, Failed, pending]
+          enum:
+            - Delivered
+            - Shipped
+            - Ordered
+            - Failed
+            - pending
         user_id:
           type: string
           format: uuid
         address:
-          $ref: "#/components/schemas/Address"
+          $ref: '#/components/schemas/Address'
         tracking_number:
           type: string
           nullable: true
         shipping_provider:
           type: string
           nullable: true
-
     OrderItem:
       type: object
-      required: [id, book_id, order_id, price, quantity]
+      required:
+        - id
+        - book_id
+        - order_id
+        - price
+        - quantity
       properties:
         id:
           type: string
@@ -764,20 +762,22 @@ components:
           nullable: true
         quantity:
           type: integer
-
     OrderWithItems:
       allOf:
-        - $ref: "#/components/schemas/Order"
+        - $ref: '#/components/schemas/Order'
         - type: object
           properties:
             items:
               type: array
               items:
-                $ref: "#/components/schemas/OrderItem"
-
+                $ref: '#/components/schemas/OrderItem'
     Collection:
       type: object
-      required: [id, created_at, title, active]
+      required:
+        - id
+        - created_at
+        - title
+        - active
       properties:
         id:
           type: string
@@ -792,20 +792,22 @@ components:
           nullable: true
         active:
           type: boolean
-
     CollectionWithBooks:
       allOf:
-        - $ref: "#/components/schemas/Collection"
+        - $ref: '#/components/schemas/Collection'
         - type: object
           properties:
             books:
               type: array
               items:
-                $ref: "#/components/schemas/Book"
-
+                $ref: '#/components/schemas/Book'
     User:
       type: object
-      required: [id, email, created_at, user_metadata]
+      required:
+        - id
+        - email
+        - created_at
+        - user_metadata
       properties:
         id:
           type: string
@@ -828,10 +830,13 @@ components:
               nullable: true
             is_admin:
               type: boolean
-
     CartItem:
       type: object
-      required: [id, price, quantity, book]
+      required:
+        - id
+        - price
+        - quantity
+        - book
       properties:
         id:
           type: string
@@ -840,52 +845,49 @@ components:
         quantity:
           type: integer
         book:
-          $ref: "#/components/schemas/Book"
+          $ref: '#/components/schemas/Book'
         product:
           type: object
           description: Stripe product record
         image_directory:
           type: string
           nullable: true
-
     ErrorResponse:
       type: object
       properties:
         error:
           type: string
-
   responses:
     BadRequest:
       description: Bad request — missing or invalid parameters
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorResponse"
+            $ref: '#/components/schemas/ErrorResponse'
     Unauthorized:
       description: Unauthorized — no valid session
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorResponse"
+            $ref: '#/components/schemas/ErrorResponse'
     Forbidden:
       description: Forbidden — admin access required
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorResponse"
+            $ref: '#/components/schemas/ErrorResponse'
     NotFound:
       description: Resource not found
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorResponse"
+            $ref: '#/components/schemas/ErrorResponse'
     InternalError:
       description: Internal server error
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorResponse"
-
+            $ref: '#/components/schemas/ErrorResponse'
 tags:
   - name: Health
     description: Service health check

@@ -21,9 +21,24 @@ const (
 
 const dbClientKey = "kb2-db-client"
 
+func startAPI(_ context.Context, errChan chan error) {
+	errChan <- fmt.Errorf("failed!")
+}
+
+func startUI(_ context.Context, errChan chan error) {
+	errChan <- fmt.Errorf("failed!")
+}
+
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+	errChan := make(chan error)
+
+	go startUI(ctx, errChan)
+	go startAPI(ctx, errChan)
+
+	err := <-errChan
+	fmt.Printf("rec: %s", err)
 
 	cmd := &cli.Command{
 		Name:    "kb2",
