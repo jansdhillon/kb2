@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package jansdhillon.kb2.v1;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+
+message Book {
+    option (google.api.resource) = {
+        type: "kathrinsbooks.com/Book"
+        pattern: "authors/{author}/books/{book}"
+    };
+
+    string name = 1[(google.api.field_behavior) = IDENTIFIER];
+}
